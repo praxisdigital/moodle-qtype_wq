@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020120900;
+$plugin->version = 2021011200;
 $plugin->requires = 2011120500; // Moodle 2.2.
 $plugin->release = '3.78.4 (Build: Niels Brock med unlimited question connections edition)';
 $plugin->maturity = MATURITY_STABLE;
