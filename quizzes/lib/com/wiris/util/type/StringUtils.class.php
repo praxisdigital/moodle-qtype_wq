@@ -103,5 +103,64 @@ class com_wiris_util_type_StringUtils {
 		$sb->b .= _hx_substr($s, $pos + strlen($target), strlen($s) - $pos - strlen($target));
 		return $sb->b;
 	}
+	static function countOccurrences($s, $target) {
+		if($s === null || $target === null || $target === "") {
+			return -1;
+		}
+		$count = 0;
+		$pos = _hx_index_of($s, $target, null);
+		while($pos !== -1) {
+			$count++;
+			$pos = _hx_index_of($s, $target, $pos + strlen($target));
+		}
+		return $count;
+	}
+	static function splitOnGreek($text) {
+		$length = haxe_Utf8::length($text);
+		if($length === 0) {
+			return null;
+		}
+		$runs = null;
+		$runStartIndex = 0;
+		$currentIndex = 0;
+		$currentGreekRun = true;
+		$it = com_wiris_system_Utf8::getIterator($text);
+		while($it->hasNext()) {
+			$codepoint = $it->next();
+			$isGreek = com_wiris_util_xml_WCharacterBase::isGreek($codepoint);
+			if($isGreek && !$currentGreekRun) {
+				if($runs === null) {
+					$runs = new _hx_array(array());
+				}
+				$runText = haxe_Utf8::sub($text, $runStartIndex, $currentIndex - $runStartIndex);
+				$runs->push($runText);
+				unset($runText);
+			}
+			if($isGreek) {
+				if($runs === null) {
+					$runs = new _hx_array(array());
+				}
+				$runs->push(com_wiris_util_type_StringUtils_0($codepoint, $currentGreekRun, $currentIndex, $isGreek, $it, $length, $runStartIndex, $runs, $text));
+			}
+			if($isGreek !== $currentGreekRun) {
+				$runStartIndex = $currentIndex;
+				$currentGreekRun = $isGreek;
+			}
+			$currentIndex += 1;
+			unset($isGreek,$codepoint);
+		}
+		if($runs !== null && !$currentGreekRun) {
+			$runText = haxe_Utf8::sub($text, $runStartIndex, $currentIndex - $runStartIndex);
+			$runs->push($runText);
+		}
+		return $runs;
+	}
 	function __toString() { return 'com.wiris.util.type.StringUtils'; }
+}
+function com_wiris_util_type_StringUtils_0(&$codepoint, &$currentGreekRun, &$currentIndex, &$isGreek, &$it, &$length, &$runStartIndex, &$runs, &$text) {
+	{
+		$s = new haxe_Utf8(null);
+		$s->addChar($codepoint);
+		return $s->toString();
+	}
 }

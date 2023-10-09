@@ -44,7 +44,7 @@ class com_wiris_quizzes_impl_UserData extends com_wiris_util_xml_SerializableImp
 	}
 	public function getUserCompoundAnswer($index, $compoundindex) {
 		$a = $this->answers[$index];
-		$compound = com_wiris_quizzes_impl_HTMLTools::parseCompoundAnswer($a);
+		$compound = com_wiris_quizzes_impl_CompoundAnswerParser::parseCompoundAnswer($a);
 		return $compound[$compoundindex][1];
 	}
 	public function setUserCompoundAnswer($index, $compoundindex, $content) {
@@ -58,7 +58,7 @@ class com_wiris_quizzes_impl_UserData extends com_wiris_util_xml_SerializableImp
 		if($a->content === null || strlen($a->content) === 0) {
 			$compound = new _hx_array(array());
 		} else {
-			$compound = com_wiris_quizzes_impl_HTMLTools::parseCompoundAnswer($a);
+			$compound = com_wiris_quizzes_impl_CompoundAnswerParser::parseCompoundAnswer($a);
 		}
 		$i = $compound->length;
 		while($i <= $compoundindex) {
@@ -69,7 +69,7 @@ class com_wiris_quizzes_impl_UserData extends com_wiris_util_xml_SerializableImp
 			$content = _hx_deref(new com_wiris_quizzes_impl_HTMLTools())->textToMathML($content);
 		}
 		$compound[$compoundindex][1] = $content;
-		$m = com_wiris_quizzes_impl_HTMLTools::joinCompoundAnswer($compound);
+		$m = com_wiris_quizzes_impl_CompoundAnswerParser::joinCompoundAnswer($compound);
 		$a->type = $m->type;
 		$a->content = $m->content;
 	}
@@ -95,12 +95,12 @@ class com_wiris_quizzes_impl_UserData extends com_wiris_util_xml_SerializableImp
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->Â»dynamics[$m]) && is_callable($this->Â»dynamics[$m]))
+			return call_user_func_array($this->Â»dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call Â«'.$m.'Â»');
 	}
 	static $TAGNAME = "userData";
 	function __toString() { return 'com.wiris.quizzes.impl.UserData'; }

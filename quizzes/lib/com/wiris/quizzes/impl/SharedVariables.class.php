@@ -3,8 +3,8 @@
 class com_wiris_quizzes_impl_SharedVariables {
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
-		$this->cache = com_wiris_quizzes_impl_QuizzesBuilderImpl::getInstance()->getVariablesCache();
-		$this->locker = com_wiris_quizzes_impl_QuizzesBuilderImpl::getInstance()->getLockProvider();
+		$this->cache = com_wiris_quizzes_impl_QuizzesImpl::getInstance()->getVariablesCache();
+		$this->locker = com_wiris_quizzes_impl_QuizzesImpl::getInstance()->getLockProvider();
 	}}
 	public function getCacheKey($name) {
 		return $name . ".var";
@@ -38,12 +38,12 @@ class com_wiris_quizzes_impl_SharedVariables {
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
-		else if(isset($this->»dynamics[$m]) && is_callable($this->»dynamics[$m]))
-			return call_user_func_array($this->»dynamics[$m], $a);
+		else if(isset($this->Â»dynamics[$m]) && is_callable($this->Â»dynamics[$m]))
+			return call_user_func_array($this->Â»dynamics[$m], $a);
 		else if('toString' == $m)
 			return $this->__toString();
 		else
-			throw new HException('Unable to call «'.$m.'»');
+			throw new HException('Unable to call Â«'.$m.'Â»');
 	}
 	static $h = null;
 	function __toString() { return 'com.wiris.quizzes.impl.SharedVariables'; }
