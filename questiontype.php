@@ -16,6 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// @codingStandardsIgnoreLine
 require_once($CFG->dirroot . '/question/type/wq/config.php');
 require_once($CFG->dirroot . '/question/type/wq/quizzes/quizzes.php');
 
@@ -35,6 +36,10 @@ class qtype_wq extends question_type {
     }
 
     public function save_question_options($question) {
+        $this->save_question_options_impl($question, true);
+    }
+
+    public function save_question_options_impl($question, $callbase) {
         global $DB;
         // We don't save another xml if we are in a cloze subquestion.
         if (empty($question->parent)) {
@@ -55,7 +60,9 @@ class qtype_wq extends question_type {
         }
         // Save question type options after wiris XML becaus if it fails we at
         // least have saved the Wiris part (relevant in multianswer case).
-        return $this->base->save_question_options($question);
+        if ($callbase) {
+            return $this->base->save_question_options($question);
+        }
     }
 
     public function delete_question($questionid, $contextid) {
@@ -92,9 +99,12 @@ class qtype_wq extends question_type {
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
+        global $CFG;
+        
         $this->base->initialise_question_instance($question->base, $questiondata);
 
         $question->id = &$question->base->id;
+        $question->idnumber = &$question->base->idnumber;
         $question->category = &$question->base->category;
         $question->contextid = &$question->base->contextid;
         $question->parent = &$question->base->parent;
@@ -110,16 +120,21 @@ class qtype_wq extends question_type {
         $question->penalty = &$question->base->penalty;
         $question->stamp = &$question->base->stamp;
         $question->version = &$question->base->version;
-        $question->hidden = &$question->base->hidden;
+        if ($CFG->version >= 2022041900 /* v4.0.0 */) {
+            $question->status = &$question->base->status;
+        } else {
+            $question->hidden = &$question->base->hidden;
+        }
         $question->timecreated = &$question->base->timecreated;
         $question->timemodified = &$question->base->timemodified;
         $question->createdby = &$question->base->createdby;
         $question->modifiedby = &$question->base->modifiedby;
         $question->hints = &$question->base->hints;
+        $question->questionbankentryid = &$question->base->questionbankentryid;
 
         // Load question xml into Wiris Quizzes API question object.
         if (empty($question->parent)) {
-            $builder = com_wiris_quizzes_api_QuizzesBuilder::getInstance();
+            $builder = com_wiris_quizzes_api_Quizzes::getInstance();
             $question->wirisquestion = $builder->readQuestion($questiondata->options->wirisquestion);
         }
     }
@@ -132,8 +147,11 @@ class qtype_wq extends question_type {
         if ($CFG->version < 2014051200) {
             // Backwards compatibility.
             $PAGE->requires->js('/question/type/wq/js/display.js', false);
+        } else if ($CFG->version >= 2022041900) {
+            // Moodle 4.0.2 and up.
+            $PAGE->requires->yui_module('moodle-qtype_wq-question_chooser_qbank', 'M.qtype_wq.question_chooser.init', array()); // @codingStandardsIgnoreLine
         } else {
-            // New moodle-standard way.
+            // Moodle 3.X.
             $PAGE->requires->yui_module('moodle-qtype_wq-question_chooser', 'M.qtype_wq.question_chooser.init');
         }
 
@@ -160,6 +178,13 @@ class qtype_wq extends question_type {
 
     public function extra_question_fields() {
         return $this->base->extra_question_fields();
+    }
+
+    public function response_file_areas() {
+        if ($this->base != null) {
+            return $this->base->response_file_areas();
+        }
+        return array();
     }
 
     public function wrsqz_mathml_decode($input) {

@@ -16,11 +16,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2021011200;
-$plugin->requires = 2011120500; // Moodle 2.2.
-$plugin->release = '3.78.4 (Build: Niels Brock med unlimited question connections edition)';
+$plugin->version = 2024032200;
+$plugin->requires = 2015111600; // Moodle 3.0.
+$plugin->release = '4.11.0';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'qtype_wq';
-$plugin->dependencies = array (
+$plugin->dependencies = array(
      'filter_wiris' => ANY_VERSION
 );

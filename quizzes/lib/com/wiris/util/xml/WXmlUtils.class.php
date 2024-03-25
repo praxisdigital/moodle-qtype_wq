@@ -175,8 +175,8 @@ class com_wiris_util_xml_WXmlUtils {
 	static function safeParseXML($xml) {
 		try {
 			return com_wiris_util_xml_WXmlUtils::parseXML($xml);
-		}catch(Exception $»e) {
-			$_ex_ = ($»e instanceof HException) ? $»e->e : $»e;
+		}catch(Exception $Â»e) {
+			$_ex_ = ($Â»e instanceof HException) ? $Â»e->e : $Â»e;
 			$e = $_ex_;
 			{
 				return Xml::createDocument();
@@ -472,6 +472,19 @@ class com_wiris_util_xml_WXmlUtils {
 			$element->removeChild($element->firstChild());
 		}
 	}
+	static function removeAttributeFromChildren($parent, $attribute) {
+		if($parent->nodeType != Xml::$Element) {
+			return;
+		}
+		$it = $parent->iterator();
+		while($it->hasNext()) {
+			$child = $it->next();
+			if($child->nodeType == Xml::$Element && $child->get($attribute) !== null) {
+				$child->remove($attribute);
+			}
+			unset($child);
+		}
+	}
 	static function getChildPosition($parent, $node) {
 		$childIndex = 0;
 		$it = $parent->iterator();
@@ -672,7 +685,7 @@ class com_wiris_util_xml_WXmlUtils {
 						if($cdata->match($aux)) {
 							$res->add($aux);
 						} else {
-							haxe_Log::trace("WARNING! malformed XML at character " . _hx_string_rec($end, "") . ":" . $xml, _hx_anonymous(array("fileName" => "WXmlUtils.hx", "lineNumber" => 815, "className" => "com.wiris.util.xml.WXmlUtils", "methodName" => "indentXml")));
+							haxe_Log::trace("WARNING! malformed XML at character " . _hx_string_rec($end, "") . ":" . $xml, _hx_anonymous(array("fileName" => "WXmlUtils.hx", "lineNumber" => 835, "className" => "com.wiris.util.xml.WXmlUtils", "methodName" => "indentXml")));
 							$res->add($aux);
 						}
 					}
