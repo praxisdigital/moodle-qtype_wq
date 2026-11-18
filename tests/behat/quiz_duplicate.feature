@@ -77,7 +77,7 @@ Scenario: Duplicate the quiz from the course page
     And I should see "Essay Wiris"
     And I should see "Match Wiris"
     # The duplicated quiz is a working, independent copy: preview shows its questions.
-    And I am on "Course 1" course homepage
-    And I click on "Wiris Quiz (copy)" "link" in the "region-main" "region"
+    And I am on the "Wiris Quiz (copy)" "mod_quiz > View" page
     And I click on "Preview" "button"
     Then I should see "The daytime sky is blue."
+    And the TinyMCE editor for "Answer" in the "Explain E = mc^2 in words" question should be initialized
